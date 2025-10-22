@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link href="css/style.css" rel="stylesheet" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js"
+      integrity="sha384-ZBXiYtYQ6hJ2Y0ZNoYuI+Nq5MqWBr+chMrS/RkXpNzQCApHEhOt2aY8EJgqwHLkJ"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="qrcode" hx-swap="innerHTML" hx-trigger="every 1s">loading</div>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const loginChallenge = params.get("login_challenge");
+
+      console.log(window.location.search);
+      console.log(loginChallenge);
+
+      document
+        .getElementById("qrcode")
+        .setAttribute("hx-get", `/login/se-bankid/${loginChallenge}/collect`);
+    </script>
+  </body>
+</html>
