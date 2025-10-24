@@ -11,8 +11,12 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://unpkg.com/htmx-json"></script>
+
+    <link href="/theme/dark" type="text/css" rel="stylesheet" />
   </head>
   <body>
+    <div hx-get="/theme/dark" hx-trigger="load" hx-swap="innerHTML"></div>
+
     <section hx-ext="json-swap">
       <div id="qrcode" hx-swap="json" hx-trigger="every 1s">
         <p json-text="`status: ${status}`"></p>

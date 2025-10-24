@@ -36,14 +36,16 @@ app.get("/callback", (_, res) =>
   res.sendFile(path.join(__dirname, "callback.html")),
 );
 
-// först av allt
-// express & gin templating
-app.get("/theme/:branding", () => {
-  // 1 get stylesheet
-  // 2 return <style></style> or similar
-  //
+const styles = {
+  dark: "* { background-color: black; color: white; }",
+  light: "* { background-color: white; color: black; }",
+};
+app.get("/theme/:branding", (req, res) => {
+  const { branding } = req.params;
   // /authMethod(se-bankid|frejaid)/instanceId
   // e.g /se-bankid/something
+  console.log(styles[branding]);
+  res.type("html").send(`<style>${styles[branding]}</style>`);
 });
 
 let SOMEVAR = 0;

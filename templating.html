@@ -16,9 +16,13 @@
     <script src="https://unpkg.com/mustache@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nunjucks/3.2.4/nunjucks.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+
+    <link href="/theme/dark" type="text/css" rel="stylesheet"/>
   </head>
   <body>
-    <div hx-ext="client-side-templates" style="color: white; display:flex; flex-direction:row; gap:2rem;">
+    <div hx-get="/theme/light" hx-trigger="load" hx-swap="innerHTML"></div>
+
+    <div hx-ext="client-side-templates" style="display:flex; flex-direction:row; gap:2rem;">
       <section>
         <h2>mustache</h2>
         <div
