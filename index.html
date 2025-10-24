@@ -11,40 +11,67 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://unpkg.com/htmx-ext-client-side-templates@2.0.0/client-side-templates.js"></script>
+
+    <!-- templating engines -->
+    <script src="https://unpkg.com/mustache@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nunjucks/3.2.4/nunjucks.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
   </head>
   <body>
-    <div id="qrcode" hx-swap="innerHTML" hx-trigger="every 1s">loading</div>
+    <div hx-ext="client-side-templates" style="color: white; display:flex; flex-direction:row; gap:2rem;">
+      <section>
+        <h2>mustache</h2>
+        <div
+          hx-get="/login/se-bankid/mustache/collect"
+          hx-trigger="every 1s"
+          mustache-template="mustache-template"
+        ></div>
 
-    <div hx-ext="client-side-templates">
-      <button hx-get="/some_json" mustache-template="my-mustache-template">
-        Handle with mustache
-      </button>
-      <button hx-get="/some_json" handlebars-template="my-handlebars-template">
-        Handle with handlebars
-      </button>
-      <button hx-get="/some_json" nunjucks-template="my-nunjucks-template">
-        Handle with nunjucks
-      </button>
-      <button hx-get="/some_xml" xslt-template="my-xslt-template">
-        Handle with XSLT
-      </button>
-    </div>
+        <template id="mustache-template">
+          <p>status: {{status}}</p>
+          <p>hintCode: {{hintCode}}</p>
+          <img src="{{qrCode}}" alt="QR Code" />
+        </template>
+      </section>
+
+      <section>
+        <h2>handlebars</h2>
+        <div
+          hx-get="/login/se-bankid/handlebars/collect"
+          hx-trigger="every 1s"
+          handlebars-template="handlebars-template"
+        ></div>
+
+        <template id="handlebars-template">
+          <p>status: {{status}}</p>
+          <p>hintCode: {{hintCode}}</p>
+          <img src="{{qrCode}}" alt="QR Code" />
+        </template>
+      </section>
+
+      <section>
+        <h2>nunjucks</h2>
+        <div
+          hx-get="/login/se-bankid/nunjucks/collect"
+          hx-trigger="every 1s"
+          nunjucks-template="nunjucks-template"
+        ></div>
+
+        <template id="nunjucks-template">
+          <p>status: {{status}}</p>
+          <p>hintCode: {{hintCode}}</p>
+          <img src="{{qrCode}}" alt="QR Code" />
+        </template>
+      </section>
 
     <script>
-      const params = new URLSearchParams(window.location.search);
-      const loginChallenge = params.get("login_challenge");
-
-      console.log(window.location.search);
-      console.log(loginChallenge);
-
-      document
-        .getElementById("qrcode")
-        .setAttribute("hx-get", `/login/se-bankid/${loginChallenge}/collect`);
-
       document.body.addEventListener("htmx:afterRequest", function (evt) {
         try {
           const res = JSON.parse(evt.detail.xhr.response);
-          if (res.redirectUrl) return window.location.replace(res.redirectUrl);
+          if (res.redirectUrl) {
+            evt.preventDefault()
+            return window.location.replace(res.redirectUrl);
+          }
         } catch (err) {
           console.error(err);
         }
