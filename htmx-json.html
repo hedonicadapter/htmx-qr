@@ -35,7 +35,10 @@
       document.body.addEventListener("htmx:afterRequest", function (evt) {
         try {
           const res = JSON.parse(evt.detail.xhr.response);
-          if (res.redirectUrl) return window.location.replace(res.redirectUrl);
+          if (res.redirectUrl) {
+            evt.preventDefault();
+            return window.location.assign(res.redirectUrl);
+          }
         } catch (err) {
           console.error(err);
         }

@@ -70,7 +70,7 @@
           const res = JSON.parse(evt.detail.xhr.response);
           if (res.redirectUrl) {
             evt.preventDefault()
-            return window.location.replace(res.redirectUrl);
+            return window.location.assign(res.redirectUrl);
           }
         } catch (err) {
           console.error(err);

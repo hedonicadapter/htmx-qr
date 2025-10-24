@@ -34,7 +34,7 @@ app.get("/htmx-json", (_, res) =>
 );
 
 app.get("/callback", (_, res) =>
-  res.type("html").send(`<div>callback redirect</div>`),
+  res.sendFile(path.join(__dirname, "callback.html")),
 );
 
 // först av allt
