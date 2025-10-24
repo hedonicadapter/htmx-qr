@@ -17,11 +17,14 @@
       <div id="qrcode" hx-swap="json" hx-trigger="every 1s">
         <p json-text="`status: ${status}`"></p>
 
-        <img @href="`${qrCode}`" />
+        <canvas class="canvas" />
       </div>
     </section>
 
-    <script>
+    <script type="module">
+      import QRCode from "https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm";
+      const canvases = document.getElementsByClassName("canvas");
+
       const params = new URLSearchParams(window.location.search);
       const loginChallenge = params.get("login_challenge");
 
@@ -32,12 +35,22 @@
         .getElementById("qrcode")
         .setAttribute("hx-get", `/login/se-bankid/${loginChallenge}/collect`);
 
-      document.body.addEventListener("htmx:afterRequest", function (evt) {
+      document.body.addEventListener("htmx:afterRequest", (evt) => {
         try {
           const res = JSON.parse(evt.detail.xhr.response);
+
           if (res.redirectUrl) {
             evt.preventDefault();
             return window.location.assign(res.redirectUrl);
+          }
+
+          if (res.qrData) {
+            for (const canvas of canvases)
+              QRCode.toCanvas(
+                canvas,
+                res.qrData,
+                (err) => err && console.log(err),
+              );
           }
         } catch (err) {
           console.error(err);

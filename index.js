@@ -1,5 +1,4 @@
 import express from "express";
-import QRCode from "qrcode";
 import * as path from "path";
 import { fileURLToPath } from "url";
 
@@ -15,13 +14,13 @@ const pendingJson = {
   status: "pending",
   hintCode: "",
   redirectUrl: undefined,
-  qrCode: "",
+  qrData: "",
 };
 const redirectJson = {
   status: "",
   hintCode: "",
   redirectUrl: "/callback",
-  qrCode: "",
+  qrData: "",
 };
 
 const app = express();
@@ -51,17 +50,13 @@ let SOMEVAR = 0;
 app.get("/login/se-bankid/:instanceid/collect", async (req, res) => {
   const { instanceid } = req.params;
   const qrData = `bankid://collect/${instanceid}${randomUuid[getRandomArbitrary(0, randomUuid.length - 1)]}`;
-  console.log(qrData);
 
   try {
     SOMEVAR++;
-
-    const qrCode = await QRCode.toDataURL(qrData + SOMEVAR);
     console.log(SOMEVAR, SOMEVAR % 20 === 19);
 
-    if (SOMEVAR % 20 === 19) return res.json({ ...redirectJson, qrCode });
-
-    return res.json({ ...pendingJson, qrCode });
+    if (SOMEVAR % 20 === 19) return res.json({ ...redirectJson, qrData });
+    return res.json({ ...pendingJson, qrData });
   } catch (err) {
     console.error(err);
     res.status(500).send("Failed to generate QR code");

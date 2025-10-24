@@ -30,8 +30,9 @@
         <template id="mustache-template">
           <p>status: {{status}}</p>
           <p>hintCode: {{hintCode}}</p>
-          <img src="{{qrCode}}" alt="QR Code" />
+          <!-- <img src="{{qrCode}}" alt="QR Code" /> -->
         </template>
+        <canvas id="/login/se-bankid/mustache/collect" />
       </section>
 
       <section>
@@ -45,8 +46,9 @@
         <template id="handlebars-template">
           <p>status: {{status}}</p>
           <p>hintCode: {{hintCode}}</p>
-          <img src="{{qrCode}}" alt="QR Code" />
+          <!-- <img src="{{qrCode}}" alt="QR Code" /> -->
         </template>
+        <canvas id="/login/se-bankid/handlebars/collect" />
       </section>
 
       <section>
@@ -60,17 +62,30 @@
         <template id="nunjucks-template">
           <p>status: {{status}}</p>
           <p>hintCode: {{hintCode}}</p>
-          <img src="{{qrCode}}" alt="QR Code" />
+          <!-- <img src="{{qrCode}}" alt="QR Code" /> -->
         </template>
+        <canvas id="/login/se-bankid/nunjucks/collect" />
       </section>
 
-    <script>
-      document.body.addEventListener("htmx:afterRequest", function (evt) {
+    <script type="module">
+      import QRCode from "https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm";
+
+      document.body.addEventListener("htmx:afterRequest", (evt) => {
         try {
           const res = JSON.parse(evt.detail.xhr.response);
+
           if (res.redirectUrl) {
-            evt.preventDefault()
+            evt.preventDefault();
             return window.location.assign(res.redirectUrl);
+          }
+
+          if (res.qrData) {
+          const canvas = document.getElementById(evt.detail.pathInfo.requestPath)
+              QRCode.toCanvas(
+                canvas,
+                res.qrData,
+                (err) => err && console.log(err),
+              );
           }
         } catch (err) {
           console.error(err);
