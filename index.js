@@ -6,10 +6,27 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const json1 = {
+  status: "pending",
+  hintCode: "",
+  redirectUrl: undefined,
+  qrCode: "",
+};
+const json2 = {
+  status: "",
+  hintCode: "",
+  redirectUrl: "/callback",
+  qrCode: "",
+};
+
 const app = express();
 
 app.get("/", function (_, res) {
   res.sendFile(path.join(__dirname, "/index.html"));
+});
+
+app.get("/callback", () => {
+  return res.type("html").send(`<div>callback redirect</div>`);
 });
 
 const randomUuid = "130d3bb2-7ed8-4302-af33-aa55be8764fb";
@@ -28,13 +45,6 @@ app.get("/theme/:branding", () => {
 });
 
 let SOMEVAR = 0;
-const json1 = {
-  status: "pending",
-  hintCode: "",
-  redirectUrl: undefined,
-  qrCode: "",
-};
-const json2 = { status: "", hintCode: "", redirectUrl: "/", qrCode: "" };
 app.get("/login/se-bankid/:instanceid/collect", async (req, res) => {
   const { instanceid } = req.params;
   const qrData = `bankid://collect/${instanceid}${randomUuid[getRandomArbitrary(0, randomUuid.length - 1)]}`;
@@ -45,10 +55,10 @@ app.get("/login/se-bankid/:instanceid/collect", async (req, res) => {
     SOMEVAR++;
     console.log(SOMEVAR, SOMEVAR % 20 === 19);
     if (SOMEVAR % 20 === 19) {
-      console.log("hello");
       return res.json(json2);
     }
-    return res.type("html").send(`<img src="${qrCode}" alt="QR Code"/>`);
+    return res.json(json1);
+    // return res.type("html").send(`<img src="${qrCode}" alt="QR Code"/>`);
   } catch (err) {
     console.error(err);
     res.status(500).send("Failed to generate QR code");

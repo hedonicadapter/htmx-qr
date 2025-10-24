@@ -10,9 +10,26 @@
       integrity="sha384-ZBXiYtYQ6hJ2Y0ZNoYuI+Nq5MqWBr+chMrS/RkXpNzQCApHEhOt2aY8EJgqwHLkJ"
       crossorigin="anonymous"
     ></script>
+    <script src="https://unpkg.com/htmx-ext-client-side-templates@2.0.0/client-side-templates.js"></script>
   </head>
   <body>
     <div id="qrcode" hx-swap="innerHTML" hx-trigger="every 1s">loading</div>
+
+    <div hx-ext="client-side-templates">
+      <button hx-get="/some_json" mustache-template="my-mustache-template">
+        Handle with mustache
+      </button>
+      <button hx-get="/some_json" handlebars-template="my-handlebars-template">
+        Handle with handlebars
+      </button>
+      <button hx-get="/some_json" nunjucks-template="my-nunjucks-template">
+        Handle with nunjucks
+      </button>
+      <button hx-get="/some_xml" xslt-template="my-xslt-template">
+        Handle with XSLT
+      </button>
+    </div>
+
     <script>
       const params = new URLSearchParams(window.location.search);
       const loginChallenge = params.get("login_challenge");
@@ -23,6 +40,15 @@
       document
         .getElementById("qrcode")
         .setAttribute("hx-get", `/login/se-bankid/${loginChallenge}/collect`);
+
+      document.body.addEventListener("htmx:afterRequest", function (evt) {
+        try {
+          const res = JSON.parse(evt.detail.xhr.response);
+          if (res.redirectUrl) return window.location.replace(res.redirectUrl);
+        } catch (err) {
+          console.error(err);
+        }
+      });
     </script>
   </body>
 </html>
