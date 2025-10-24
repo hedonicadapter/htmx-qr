@@ -6,6 +6,11 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const randomUuid = "130d3bb2-7ed8-4302-af33-aa55be8764fb";
+function getRandomArbitrary(min, max) {
+  return Math.round(Math.random() * (max - min) + min);
+}
+
 const pendingJson = {
   status: "pending",
   hintCode: "",
@@ -21,16 +26,16 @@ const redirectJson = {
 
 const app = express();
 
-app.get("/", (_, res) => res.sendFile(path.join(__dirname, "/index.html")));
+app.get("/templating", (_, res) =>
+  res.sendFile(path.join(__dirname, "/templating.html")),
+);
+app.get("/htmx-json", (_, res) =>
+  res.sendFile(path.join(__dirname, "/htmx-json.html")),
+);
 
 app.get("/callback", (_, res) =>
   res.type("html").send(`<div>callback redirect</div>`),
 );
-
-const randomUuid = "130d3bb2-7ed8-4302-af33-aa55be8764fb";
-function getRandomArbitrary(min, max) {
-  return Math.round(Math.random() * (max - min) + min);
-}
 
 // först av allt
 // express & gin templating
