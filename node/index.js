@@ -26,14 +26,14 @@ const redirectJson = {
 const app = express();
 
 app.get("/templating", (_, res) =>
-  res.sendFile(path.join(__dirname, "/templating.html")),
+  res.sendFile(path.join(__dirname, "../html/templating.html")),
 );
 app.get("/htmx-json", (_, res) =>
-  res.sendFile(path.join(__dirname, "/htmx-json.html")),
+  res.sendFile(path.join(__dirname, "../html/htmx-json.html")),
 );
 
 app.get("/callback", (_, res) =>
-  res.sendFile(path.join(__dirname, "callback.html")),
+  res.sendFile(path.join(__dirname, "../html/callback.html")),
 );
 
 const styles = {
