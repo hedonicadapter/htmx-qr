@@ -1,10 +1,11 @@
 ## go (använder templating inte htmx-json):
 http://localhost:3000/theme/dark or light
+använder style-tag, behövs ingen cache busting AFAIK
 
 ## node-handlebars branch:
 http://localhost:3000/templating/dark
  
-## node main (saknar SSR stylesheets, välj en templating engine eller htmx.json):
+## node main (saknar SSR stylesheets, välj en templating engine eller htmx-json):
 http://localhost:3000/templating
 http://localhost:3000/htmx-json
 
