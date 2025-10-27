@@ -20,10 +20,10 @@
   <body>
     <style>[[ .style ]]</style>
 
-    <div hx-ext="client-side-templates" style="display:flex; flex-direction:row; gap:2rem;">
+    <div hx-ext="client-side-templates">
       <section>
         <h2>mustache</h2>
-        <duiiv
+        <div
           hx-get="/login/se-bankid/mustache/collect"
           hx-trigger="every 1s"
           mustache-template="mustache-template"

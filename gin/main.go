@@ -2,40 +2,39 @@ package main
 
 import (
 	"fmt"
+	"html/template"
+	"maps"
 	"math/rand"
 	"net/http"
-	"time"
-	"html/template"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := gin.Default()
-  r.Delims("[[", "]]")
-  r.LoadHTMLGlob("templates/*")
+	r.Delims("[[", "]]") // nunjucks, handlebars, and mustache use {{ }} which conflicts with gin templating
+	r.LoadHTMLGlob("templates/*")
 
 	styles := map[string]string{
 		"dark":  "* { background-color: black; color: white; }",
 		"light": "* { background-color: white; color: black; }",
 	}
 
-  r.GET("/callback", func(c *gin.Context) {
+	r.GET("/callback", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "callback.html", gin.H{})
 	})
 
-  r.GET("/theme/:branding", func(c *gin.Context) {
-    branding := c.Param("branding")
+	r.GET("/theme/:branding", func(c *gin.Context) {
+		branding := c.Param("branding")
 
 		if style, ok := styles[branding]; ok {
-			fmt.Println(style)
 			c.HTML(http.StatusOK, "index.tmpl", gin.H{
 				"style": template.CSS(style),
 			})
-    } else {
+		} else {
 			c.String(http.StatusNotFound, "Unknown theme")
 		}
-  })
+	})
 
 	pendingJSON := gin.H{
 		"status":      "pending",
@@ -52,7 +51,6 @@ func main() {
 
 	var someVar int64 = 0
 	randomUUID := "130d3bb2-7ed8-4302-af33-aa55be8764fb"
-	rand.Seed(time.Now().UnixNano())
 	r.GET("/login/se-bankid/:instanceid/collect", func(c *gin.Context) {
 		instanceID := c.Param("instanceid")
 
@@ -60,13 +58,11 @@ func main() {
 		qrData := fmt.Sprintf("bankid://collect/%s%c", instanceID, randomChar)
 
 		someVar++
-		fmt.Println(someVar, someVar % 20 == 19)
+		fmt.Println(someVar, someVar%20 == 19)
 
-		if someVar % 20 == 19 {
+		if someVar%20 == 19 {
 			response := gin.H{}
-			for k, v := range redirectJSON {
-				response[k] = v
-			}
+			maps.Copy(response, redirectJSON)
 			response["qrData"] = qrData
 
 			c.JSON(http.StatusOK, response)
@@ -74,9 +70,7 @@ func main() {
 		}
 
 		response := gin.H{}
-		for k, v := range pendingJSON {
-			response[k] = v
-		}
+		maps.Copy(response, pendingJSON)
 		response["qrData"] = qrData
 
 		c.JSON(http.StatusOK, response)
