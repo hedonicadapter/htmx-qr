@@ -1,6 +1,7 @@
 import express from "express";
 import * as path from "path";
 import { fileURLToPath } from "url";
+import { engine } from "express-handlebars";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,6 +11,10 @@ function getRandomArbitrary(min, max) {
   return Math.round(Math.random() * (max - min) + min);
 }
 
+const styles = {
+  dark: "* { background-color: black; color: white; }",
+  light: "* { background-color: white; color: black; }",
+};
 const pendingJson = {
   status: "pending",
   hintCode: "",
@@ -25,21 +30,28 @@ const redirectJson = {
 
 const app = express();
 
-app.get("/templating", (_, res) =>
-  res.sendFile(path.join(__dirname, "../html/templating.html")),
+app.engine("handlebars", engine());
+app.set("view engine", "handlebars");
+app.set("views", "./html");
+
+app.get(
+  "/templating/:branding",
+  (req, res) => {
+    const { branding } = req.params;
+    res.render("home", {
+      style: styles[branding],
+    });
+  },
+  // res.sendFile(path.join(__dirname, "./html/templating.html")),
 );
 app.get("/htmx-json", (_, res) =>
-  res.sendFile(path.join(__dirname, "../html/htmx-json.html")),
+  res.sendFile(path.join(__dirname, "./html/htmx-json.html")),
 );
 
 app.get("/callback", (_, res) =>
-  res.sendFile(path.join(__dirname, "../html/callback.html")),
+  res.sendFile(path.join(__dirname, "./html/callback.html")),
 );
 
-const styles = {
-  dark: "* { background-color: black; color: white; }",
-  light: "* { background-color: white; color: black; }",
-};
 app.get("/theme/:branding", (req, res) => {
   const { branding } = req.params;
   // /authMethod(se-bankid|frejaid)/instanceId

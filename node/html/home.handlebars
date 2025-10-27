@@ -1,0 +1,74 @@
+<div hx-ext="client-side-templates">
+  <section>
+    <h2>mustache</h2>
+    <div
+      hx-get="/login/se-bankid/mustache/collect"
+      hx-trigger="every 1s"
+      mustache-template="mustache-template"
+    ></div>
+
+    <template id="mustache-template">
+      <p>status: {{status}}</p>
+      <p>hintCode: {{hintCode}}</p>
+      <!-- <img src="{{qrCode}}" alt="QR Code" /> -->
+    </template>
+    <canvas id="/login/se-bankid/mustache/collect" />
+  </section>
+
+  <section>
+    <h2>handlebars</h2>
+    <div
+      hx-get="/login/se-bankid/handlebars/collect"
+      hx-trigger="every 1s"
+      handlebars-template="handlebars-template"
+    ></div>
+
+    <template id="handlebars-template">
+      <p>status: {{status}}</p>
+      <p>hintCode: {{hintCode}}</p>
+      <!-- <img src="{{qrCode}}" alt="QR Code" /> -->
+    </template>
+    <canvas id="/login/se-bankid/handlebars/collect" />
+  </section>
+
+  <section>
+    <h2>nunjucks</h2>
+    <div
+      hx-get="/login/se-bankid/nunjucks/collect"
+      hx-trigger="every 1s"
+      nunjucks-template="nunjucks-template"
+    ></div>
+
+    <template id="nunjucks-template">
+      <p>status: {{status}}</p>
+      <p>hintCode: {{hintCode}}</p>
+      <!-- <img src="{{qrCode}}" alt="QR Code" /> -->
+    </template>
+    <canvas id="/login/se-bankid/nunjucks/collect" />
+  </section>
+
+<script type="module">
+  import QRCode from "https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm";
+
+  document.body.addEventListener("htmx:afterRequest", (evt) => {
+    try {
+      const res = JSON.parse(evt.detail.xhr.response);
+
+      if (res.redirectUrl) {
+        evt.preventDefault();
+        return window.location.assign(res.redirectUrl);
+      }
+
+      if (res.qrData) {
+      const canvas = document.getElementById(evt.detail.pathInfo.requestPath)
+          QRCode.toCanvas(
+            canvas,
+            res.qrData,
+            (err) => err && console.log(err),
+          );
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });
+</script>
